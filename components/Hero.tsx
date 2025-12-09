@@ -8,7 +8,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ isActive }) => {
   return (
-    <section className="relative h-screen w-full flex flex-col justify-between bg-ind-black overflow-hidden border-r border-ind-concrete">
+    <section className="relative min-h-screen w-full flex flex-col justify-between bg-ind-black overflow-hidden border-r border-ind-concrete pb-20 md:pb-0">
       
       {/* Background Grid */}
       <div className="absolute inset-0 bg-grid-pattern bg-grid-sm opacity-20 pointer-events-none"></div>
@@ -20,7 +20,7 @@ const Hero: React.FC<HeroProps> = ({ isActive }) => {
          </h1>
       </div>
 
-      <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-20 lg:px-32">
+      <div className="relative z-10 flex-1 flex flex-col justify-center px-6 md:px-20 lg:px-32 pt-24 md:pt-0">
         <div className="max-w-6xl">
             <div className={`inline-flex items-center gap-2 bg-ind-orange/10 border border-ind-orange text-ind-orange px-4 py-2 font-mono text-sm mb-6 font-bold transition-all duration-700 delay-100 ${isActive ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
                 <span className="w-2 h-2 bg-ind-orange animate-pulse"></span>

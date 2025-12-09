@@ -15,12 +15,12 @@ const Specs: React.FC<SpecsProps> = ({ isActive }) => {
   };
 
   return (
-    <section className="h-screen w-full bg-[#121212] relative overflow-hidden flex items-center justify-center p-4 md:p-12">
+    <section className="min-h-screen w-full bg-[#121212] relative flex items-center justify-center p-4 md:p-12 pb-24 md:pb-12">
         {/* Animated Background */}
         <div className="absolute inset-0 bg-dots bg-dots-sm opacity-10 pointer-events-none"></div>
         <div className="absolute right-0 top-0 w-1/2 h-full bg-ind-black/50 transform skew-x-12 translate-x-32 border-l border-ind-concrete pointer-events-none"></div>
 
-      <div className="max-w-7xl w-full mx-auto relative z-10 h-full flex flex-col justify-center">
+      <div className="max-w-7xl w-full mx-auto relative z-10 flex flex-col justify-center pt-20 md:pt-0">
         <div className="flex flex-col md:flex-row items-baseline justify-between mb-16 border-b border-ind-concrete pb-4">
           <h2 className={`text-6xl md:text-8xl font-display font-bold uppercase tracking-tighter text-ind-light transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-20'}`}>
             Specifications

@@ -4,7 +4,7 @@ import Hero from './components/Hero';
 import Specs from './components/Specs';
 import Modules from './components/Modules';
 import { NAV_ITEMS } from './constants';
-import { Menu, X, ArrowDown, Hexagon } from 'lucide-react';
+import { Menu, X, ArrowDown, Hexagon, ChevronUp, ChevronDown } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -18,20 +18,26 @@ const App: React.FC = () => {
   ];
 
   const totalSlides = slides.length;
+  const slideContainerRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Optimized Custom Cursor Logic
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Disable custom cursor on touch devices to prevent artifacts
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouchDevice && cursorRef.current) {
+        cursorRef.current.style.display = 'none';
+        return;
+    }
+
     const cursor = cursorRef.current;
     const cursorDot = cursorDotRef.current;
     if (!cursor || !cursorDot) return;
 
     const onMouseMove = (e: MouseEvent) => {
-      // Direct DOM manipulation for performance (avoids React render cycle)
       const { clientX, clientY } = e;
-      // Using translate3d for hardware acceleration
       cursor.style.transform = `translate3d(${clientX}px, ${clientY}px, 0) translate(-50%, -50%)`;
     };
 
@@ -78,9 +84,9 @@ const App: React.FC = () => {
     };
   }, []);
 
-  // Scroll Jacking Logic
+  // Navigation Logic
   const lastScrollTime = useRef(0);
-  const scrollCooldown = 800; // Reduced slightly for better responsiveness
+  const scrollCooldown = 800; 
 
   const handleSlideChange = (direction: 'next' | 'prev') => {
     const now = Date.now();
@@ -97,8 +103,27 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > 30) {
-        handleSlideChange(e.deltaY > 0 ? 'next' : 'prev');
+      // 1. Disable scroll jacking on mobile (width check)
+      if (window.innerWidth < 768) return;
+
+      const currentContainer = slideContainerRefs.current[currentSlide];
+      if (!currentContainer) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = currentContainer;
+      const isAtBottom = Math.ceil(scrollTop + clientHeight) >= scrollHeight;
+      const isAtTop = scrollTop <= 0;
+
+      // 2. Only switch slides if we are at the scroll boundaries
+      if (e.deltaY > 0) {
+        // Scrolling Down
+        if (isAtBottom && Math.abs(e.deltaY) > 30) {
+           handleSlideChange('next');
+        }
+      } else {
+        // Scrolling Up
+        if (isAtTop && Math.abs(e.deltaY) > 30) {
+           handleSlideChange('prev');
+        }
       }
     };
 
@@ -123,8 +148,8 @@ const App: React.FC = () => {
       <div 
         ref={cursorRef}
         className="fixed z-[100] pointer-events-none transition-all duration-150 ease-out 
-                   w-4 h-4 bg-ind-light border border-transparent rounded-full flex items-center justify-center mix-blend-normal top-0 left-0"
-        style={{ willChange: 'transform, width, height' }} // Hint to browser for optimization
+                   w-4 h-4 bg-ind-light border border-transparent rounded-full flex items-center justify-center mix-blend-normal top-0 left-0 hidden md:flex"
+        style={{ willChange: 'transform, width, height' }}
       >
         <div ref={cursorDotRef} className="w-1 h-1 bg-black rounded-full transition-opacity duration-200"></div>
       </div>
@@ -152,12 +177,12 @@ const App: React.FC = () => {
       </nav>
 
       {/* Persistent UI: Header */}
-      <header className="fixed top-0 left-0 w-full z-40 px-8 py-6 flex justify-between items-start pointer-events-none">
+      <header className="fixed top-0 left-0 w-full z-40 px-6 md:px-8 py-4 md:py-6 flex justify-between items-start pointer-events-none">
         <div className="pointer-events-auto">
           <div className="flex items-center gap-3">
-             <Hexagon className="text-ind-orange fill-ind-orange/20 w-10 h-10 animate-spin-slow" />
+             <Hexagon className="text-ind-orange fill-ind-orange/20 w-8 h-8 md:w-10 md:h-10 animate-spin-slow" />
              <div>
-                <h1 className="font-display font-bold text-2xl leading-none tracking-tighter">PROTO_OS</h1>
+                <h1 className="font-display font-bold text-xl md:text-2xl leading-none tracking-tighter">PROTO_OS</h1>
                 <p className="font-mono text-[10px] text-ind-concrete tracking-widest">SYSTEM_READY</p>
              </div>
           </div>
@@ -170,23 +195,19 @@ const App: React.FC = () => {
         </button>
       </header>
 
-      {/* Slides Container - Parallax & Blur System */}
+      {/* Slides Container */}
       <main className="relative w-full h-full bg-ind-black overflow-hidden perspective-[1000px]">
         {slides.map((Slide, index) => {
           let styles = '';
           let overlayOpacity = 'opacity-0';
 
           if (index === currentSlide) {
-            // Active Slide
             styles = 'z-20 translate-y-0 opacity-100 blur-0 scale-100 grayscale-0';
             overlayOpacity = 'opacity-0';
           } else if (index < currentSlide) {
-            // Previous Slide (Moved Up - Parallax Exit)
-            // Moves -50% to create depth perception against the incoming slide moving 100%
             styles = 'z-10 -translate-y-1/2 opacity-60 blur-md scale-95 grayscale';
             overlayOpacity = 'opacity-40';
           } else {
-            // Next Slide (Waiting Below)
             styles = 'z-30 translate-y-full opacity-100 blur-0 scale-100 grayscale-0';
             overlayOpacity = 'opacity-0';
           }
@@ -194,15 +215,34 @@ const App: React.FC = () => {
           return (
             <div
               key={index}
-              className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] transform will-change-transform ${styles}`}
+              // Fix: Wrapped assignment in curly braces to ensure return type is void
+              ref={(el) => { slideContainerRefs.current[index] = el; }}
+              className={`absolute inset-0 w-full h-full transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] transform will-change-transform overflow-y-auto overflow-x-hidden ${styles}`}
             >
               <Slide.component isActive={index === currentSlide} />
-              {/* Darkening overlay for depth */}
               <div className={`absolute inset-0 bg-black pointer-events-none transition-opacity duration-1000 ${overlayOpacity}`}></div>
             </div>
           );
         })}
       </main>
+
+      {/* Mobile Navigation Controls (Footer) */}
+      <div className="fixed bottom-0 left-0 w-full z-50 md:hidden flex border-t border-ind-concrete bg-ind-black">
+        <button 
+          onClick={() => handleSlideChange('prev')}
+          disabled={currentSlide === 0}
+          className="flex-1 py-4 bg-ind-black text-ind-light border-r border-ind-concrete disabled:opacity-30 disabled:cursor-not-allowed hover:bg-ind-concrete/20 uppercase font-mono font-bold flex items-center justify-center gap-2 transition-colors active:bg-ind-concrete/40"
+        >
+          <ChevronUp size={20} /> Prev
+        </button>
+        <button 
+          onClick={() => handleSlideChange('next')}
+          disabled={currentSlide === totalSlides - 1}
+          className="flex-1 py-4 bg-ind-orange text-black font-bold uppercase font-mono flex items-center justify-center gap-2 transition-colors active:bg-white"
+        >
+          Next <ChevronDown size={20} />
+        </button>
+      </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (

@@ -9,7 +9,7 @@ interface ModulesProps {
 
 const Modules: React.FC<ModulesProps> = ({ isActive }) => {
   return (
-    <section className="h-screen w-full bg-[#0a0a0a] relative overflow-hidden flex flex-col pt-24 pb-12 px-6 md:px-20">
+    <section className="min-h-screen w-full bg-[#0a0a0a] relative flex flex-col pt-24 pb-24 md:pb-12 px-6 md:px-20">
       
       {/* Background Decor */}
       <div className="absolute top-0 right-20 w-px h-full bg-ind-concrete opacity-30"></div>
@@ -28,7 +28,7 @@ const Modules: React.FC<ModulesProps> = ({ isActive }) => {
             </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden pr-4 custom-scrollbar z-10">
+      <div className="flex-1 z-10">
         <div className="grid grid-cols-1 gap-6 pb-20">
             {PROJECTS.map((project, index) => (
                 <div 
