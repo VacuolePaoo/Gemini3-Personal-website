@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PROTO_OS // PORTFOLIO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700;800&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['"JetBrains Mono"', 'monospace'],
+              display: ['"Oswald"', 'sans-serif'],
+            },
+            colors: {
+              'ind-black': '#171717',
+              'ind-concrete': '#4d4d4d',
+              'ind-light': '#dedede',
+              'ind-orange': '#F25623',
+            },
+            backgroundImage: {
+              'hazard': 'repeating-linear-gradient(45deg, #171717, #171717 10px, #F25623 10px, #F25623 20px)',
+              'grid-pattern': 'linear-gradient(to right, #4d4d4d 1px, transparent 1px), linear-gradient(to bottom, #4d4d4d 1px, transparent 1px)',
+              'dots': 'radial-gradient(#4d4d4d 1px, transparent 1px)',
+            },
+            backgroundSize: {
+              'grid-sm': '40px 40px',
+              'dots-sm': '20px 20px',
+            },
+            animation: {
+              'spin-slow': 'spin 10s linear infinite',
+              'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'slide-in-right': 'slideInRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              'glitch': 'glitch 1s linear infinite',
+              'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+              slideUp: {
+                '0%': { transform: 'translateY(100px)', opacity: '0' },
+                '100%': { transform: 'translateY(0)', opacity: '1' },
+              },
+              slideInRight: {
+                '0%': { transform: 'translateX(100px)', opacity: '0' },
+                '100%': { transform: 'translateX(0)', opacity: '1' },
+              },
+              glitch: {
+                '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
+                '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
+                '62%': { transform: 'translate(0,0) skew(5deg)' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      /* Hide Scrollbar globally */
+      body {
+        cursor: none; /* We use custom cursor */
+        background-color: #171717;
+        color: #dedede;
+        overflow: hidden; /* Prevent default scroll */
+      }
+      
+      /* Utilities */
+      .delay-100 { animation-delay: 100ms; }
+      .delay-200 { animation-delay: 200ms; }
+      .delay-300 { animation-delay: 300ms; }
+      .delay-500 { animation-delay: 500ms; }
+      
+      .clip-path-slant {
+        clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+      }
+      
+      /* CRT Effect */
+      .scanline {
+        background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+        background-size: 100% 4px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.15;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.32.0"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <div class="scanline"></div>
+  </body>
+</html>
